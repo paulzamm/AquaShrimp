@@ -1,0 +1,1 @@
+"""AquaShrimp App package."""
