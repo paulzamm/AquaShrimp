@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 from datetime import datetime
->>>>>>> develop
 from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import CheckConstraint, Float, ForeignKey, String, Text, func
@@ -28,17 +25,6 @@ class RecomendacionAlimentacion(Base, TimestampMixin):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-<<<<<<< HEAD
-    id_piscina: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("piscinas.id", ondelete="CASCADE"), nullable=True
-    )
-    id_usuario: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("usuarios.id"), nullable=True
-    )
-
-    piscina: Mapped[Optional["Piscina"]] = relationship(back_populates="recomendaciones")
-    usuario: Mapped[Optional["Usuario"]] = relationship(back_populates="recomendaciones")
-=======
     id_piscina: Mapped[int] = mapped_column(
         ForeignKey("piscinas.id", ondelete="CASCADE")
     )
@@ -58,4 +44,3 @@ class RecomendacionAlimentacion(Base, TimestampMixin):
     usuario: Mapped[Optional["Usuario"]] = relationship(
         back_populates="recomendaciones_alimentacion"
     )
->>>>>>> develop
