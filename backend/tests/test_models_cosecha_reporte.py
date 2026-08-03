@@ -71,6 +71,9 @@ class TestCosechaModel:
             test_session.flush()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9d1c1b4 (feat: add Alembic configuration and initial migration)
     def test_cosecha_talla_positiva_constraint(self, test_session):
         piscina = Piscina(codigo="P-CO5", ubicacion="T", area_m2=100, profundidad=1.0)
         test_session.add(piscina)
@@ -83,8 +86,11 @@ class TestCosechaModel:
         with pytest.raises(IntegrityError):
             test_session.flush()
 
+<<<<<<< HEAD
 =======
 >>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
+=======
+>>>>>>> 9d1c1b4 (feat: add Alembic configuration and initial migration)
 
 class TestReporteGerencialModel:
     def test_create_reporte(self, test_session):
@@ -100,10 +106,14 @@ class TestReporteGerencialModel:
         reporte = ReporteGerencial(
             id_usuario=usuario.id,
 <<<<<<< HEAD
+<<<<<<< HEAD
             tipo_reporte="rendimiento",
 =======
             tipo_reporte="mensual",
 >>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
+=======
+            tipo_reporte="rendimiento",
+>>>>>>> 9d1c1b4 (feat: add Alembic configuration and initial migration)
             periodo_inicio=date(2026, 6, 1),
             periodo_fin=date(2026, 6, 30),
         )
@@ -124,10 +134,14 @@ class TestReporteGerencialModel:
         reporte = ReporteGerencial(
             id_usuario=usuario.id,
 <<<<<<< HEAD
+<<<<<<< HEAD
             tipo_reporte="alertas",
 =======
             tipo_reporte="semanal",
 >>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
+=======
+            tipo_reporte="alertas",
+>>>>>>> 9d1c1b4 (feat: add Alembic configuration and initial migration)
             periodo_inicio=date(2026, 7, 1),
             periodo_fin=date(2026, 7, 7),
         )
@@ -157,6 +171,9 @@ class TestReporteGerencialModel:
         with pytest.raises(IntegrityError):
             test_session.flush()
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 9d1c1b4 (feat: add Alembic configuration and initial migration)
 
     def test_reporte_tipo_invalido_constraint(self, test_session):
         rol = Rol(nombre_rol="R-RP4")
@@ -177,5 +194,8 @@ class TestReporteGerencialModel:
         test_session.add(reporte)
         with pytest.raises(IntegrityError):
             test_session.flush()
+<<<<<<< HEAD
 =======
 >>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
+=======
+>>>>>>> 9d1c1b4 (feat: add Alembic configuration and initial migration)

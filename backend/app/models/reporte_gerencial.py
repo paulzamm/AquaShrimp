@@ -19,7 +19,7 @@ class ReporteGerencial(Base, TimestampMixin):
             name="ck_reportes_periodo_valido",
         ),
         CheckConstraint(
-            "tipo_reporte IN ('rendimiento', 'alertas', 'alimentacion', 'mensual', 'semanal')",
+            "tipo_reporte IN ('rendimiento', 'alertas', 'alimentacion')",
             name="ck_reportes_tipo",
         ),
     )
