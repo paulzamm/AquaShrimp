@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.accion_correctiva import AccionCorrectiva
     from app.models.alerta import Alerta
     from app.models.recomendacion_alimentacion import RecomendacionAlimentacion
+    from app.models.registro_auditoria import RegistroAuditoria
     from app.models.reporte_gerencial import ReporteGerencial
     from app.models.rol import Rol
 
@@ -42,6 +43,9 @@ class Usuario(Base, TimestampMixin):
         back_populates="usuario"
     )
     reportes_gerenciales: Mapped[list["ReporteGerencial"]] = relationship(
+        back_populates="usuario"
+    )
+    registros_auditoria: Mapped[list["RegistroAuditoria"]] = relationship(
         back_populates="usuario"
     )
 
