@@ -14,37 +14,23 @@ logger = logging.getLogger(__name__)
 
 def infer_tabla_afectada(path: str) -> str:
     """Infer the target database table/entity based on the request URL path."""
-    path_lower = path.lower()
-    if "/api/usuarios" in path_lower:
-        return "usuarios"
-    elif "/api/roles" in path_lower:
-        return "roles"
-    elif "/api/piscinas" in path_lower:
-        return "piscinas"
-    elif "/api/sensores" in path_lower:
-        return "sensores"
-    elif "/api/lecturas" in path_lower:
-        return "lecturas_sensores"
-    elif "/api/alertas" in path_lower:
-        return "alertas"
-    elif "/api/acciones-correctivas" in path_lower:
-        return "acciones_correctivas"
-    elif "/api/cosechas" in path_lower:
-        return "cosechas"
-    elif "/api/reportes" in path_lower:
-        return "reportes_gerenciales"
-    elif "/api/auth" in path_lower:
-        return "usuarios"
-    else:
-        parts = [p for p in path.split("/") if p]
-        return parts[1] if len(parts) > 1 else "general"
+    parts = [p for p in path.strip("/").split("/") if p]
+    if len(parts) >= 2 and parts[0].lower() == "api":
+        table = parts[1].lower().replace("-", "_")
+        # special cases
+        if table == "lecturas": return "lecturas_sensores"
+        if table == "reportes": return "reportes_gerenciales"
+        if table == "auth": return "usuarios"
+        return table
+    return "general"
 
 
 def extract_registro_id(path: str) -> Optional[int]:
     """Extract integer resource ID from URL path if present (e.g. /api/piscinas/5)."""
-    parts = [p for p in path.split("/") if p]
-    if parts and parts[-1].isdigit():
-        return int(parts[-1])
+    parts = [p for p in path.strip("/").split("/") if p]
+    for part in reversed(parts):
+        if part.isdigit():
+            return int(part)
     return None
 
 
@@ -91,9 +77,9 @@ class AuditMiddleware(BaseHTTPMiddleware):
                 }
                 detalles = json.dumps(detalles_dict, ensure_ascii=False)
 
-                # Insert into DB using request DB session or new SessionLocal
-                db = getattr(request.state, "db", None)
-                if db is not None:
+                # Always use a new SessionLocal to avoid reusing a closed session
+                db_session = SessionLocal()
+                try:
                     registro = RegistroAuditoria(
                         id_usuario=id_usuario,
                         accion=accion,
@@ -102,23 +88,10 @@ class AuditMiddleware(BaseHTTPMiddleware):
                         detalles=detalles,
                         ip_origen=ip_origen,
                     )
-                    db.add(registro)
-                    db.commit()
-                else:
-                    db_session = SessionLocal()
-                    try:
-                        registro = RegistroAuditoria(
-                            id_usuario=id_usuario,
-                            accion=accion,
-                            tabla_afectada=tabla_afectada,
-                            registro_id=registro_id,
-                            detalles=detalles,
-                            ip_origen=ip_origen,
-                        )
-                        db_session.add(registro)
-                        db_session.commit()
-                    finally:
-                        db_session.close()
+                    db_session.add(registro)
+                    db_session.commit()
+                finally:
+                    db_session.close()
 
             except Exception as e:
                 logger.warning(f"Error intercepting audit record: {e}")
