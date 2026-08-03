@@ -6,7 +6,18 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.routers import auth, lecturas, piscina, rol, sensor, usuario
+from app.routers import (
+    accion_correctiva,
+    alerta,
+    auth,
+    cosecha,
+    lecturas,
+    piscina,
+    reporte_gerencial,
+    rol,
+    sensor,
+    usuario,
+)
 
 app = FastAPI(
     title="AquaShrimp API",
@@ -31,6 +42,10 @@ app.include_router(usuario.router)
 app.include_router(piscina.router)
 app.include_router(sensor.router)
 app.include_router(lecturas.router)
+app.include_router(alerta.router)
+app.include_router(accion_correctiva.router)
+app.include_router(cosecha.router)
+app.include_router(reporte_gerencial.router)
 
 # Configuration for CORS middleware
 app.add_middleware(
