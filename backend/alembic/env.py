@@ -65,19 +65,8 @@ async def run_async_migrations() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode with fallback if DB container is offline."""
-    try:
-        asyncio.run(run_async_migrations())
-    except Exception:
-        # Fallback for offline revision autogeneration when DB container is not running
-        fallback_engine = create_engine("sqlite:///:memory:")
-        with fallback_engine.connect() as connection:
-            context.configure(
-                connection=connection,
-                target_metadata=target_metadata,
-            )
-            with context.begin_transaction():
-                context.run_migrations()
+    """Run migrations in 'online' mode."""
+    asyncio.run(run_async_migrations())
 
 
 if context.is_offline_mode():
