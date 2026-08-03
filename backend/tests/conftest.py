@@ -6,6 +6,7 @@ from sqlalchemy.pool import StaticPool
 
 import app.models  # noqa: F401
 from app.core.database import Base, get_db
+from app.middlewares import audit
 from app.main import app
 
 
@@ -25,6 +26,7 @@ def test_engine():
 @pytest.fixture
 def test_session(test_engine):
     TestSession = sessionmaker(bind=test_engine, autocommit=False, autoflush=False)
+    audit.SessionLocal = TestSession
     session: Session = TestSession()
     try:
         yield session
@@ -38,9 +40,7 @@ from fastapi import Request
 
 @pytest.fixture
 def client(test_session):
-    def override_get_db(request: Request):
-        if hasattr(request, "state"):
-            request.state.db = test_session
+    def override_get_db():
         try:
             yield test_session
         finally:
