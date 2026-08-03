@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.routers import auth
+from app.routers import auth, piscina, rol, sensor, usuario
 
 app = FastAPI(
     title="AquaShrimp API",
@@ -14,6 +14,10 @@ app = FastAPI(
 
 # Include Routers
 app.include_router(auth.router)
+app.include_router(rol.router)
+app.include_router(usuario.router)
+app.include_router(piscina.router)
+app.include_router(sensor.router)
 
 # Configuration for CORS middleware
 app.add_middleware(
