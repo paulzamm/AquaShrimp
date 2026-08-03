@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str 
 
-    APP_ENV: str = "development"
-    SECRET_KEY: str = "change-me-in-production"
+    APP_ENV: str 
+    SECRET_KEY: str 
 
     @property
     def DATABASE_URL(self) -> str:

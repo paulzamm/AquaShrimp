@@ -70,6 +70,18 @@ class TestCosechaModel:
         with pytest.raises(IntegrityError):
             test_session.flush()
 
+    def test_cosecha_talla_positiva_constraint(self, test_session):
+        piscina = Piscina(codigo="P-CO5", ubicacion="T", area_m2=100, profundidad=1.0)
+        test_session.add(piscina)
+        test_session.flush()
+
+        cosecha = Cosecha(
+            id_piscina=piscina.id, fecha_cosecha=date(2026, 7, 21), talla_promedio=0.0
+        )
+        test_session.add(cosecha)
+        with pytest.raises(IntegrityError):
+            test_session.flush()
+
 
 class TestReporteGerencialModel:
     def test_create_reporte(self, test_session):
@@ -84,7 +96,7 @@ class TestReporteGerencialModel:
 
         reporte = ReporteGerencial(
             id_usuario=usuario.id,
-            tipo_reporte="mensual",
+            tipo_reporte="rendimiento",
             periodo_inicio=date(2026, 6, 1),
             periodo_fin=date(2026, 6, 30),
         )
@@ -104,7 +116,7 @@ class TestReporteGerencialModel:
 
         reporte = ReporteGerencial(
             id_usuario=usuario.id,
-            tipo_reporte="semanal",
+            tipo_reporte="alertas",
             periodo_inicio=date(2026, 7, 1),
             periodo_fin=date(2026, 7, 7),
         )
@@ -129,6 +141,26 @@ class TestReporteGerencialModel:
             tipo_reporte="rendimiento",
             periodo_inicio=date(2026, 7, 10),
             periodo_fin=date(2026, 7, 1),  # Invalid: fin < inicio
+        )
+        test_session.add(reporte)
+        with pytest.raises(IntegrityError):
+            test_session.flush()
+
+    def test_reporte_tipo_invalido_constraint(self, test_session):
+        rol = Rol(nombre_rol="R-RP4")
+        test_session.add(rol)
+        test_session.flush()
+        usuario = Usuario(
+            id_rol=rol.id, nombre="G4", correo="rp4@t.com", contrasena_hash="h"
+        )
+        test_session.add(usuario)
+        test_session.flush()
+
+        reporte = ReporteGerencial(
+            id_usuario=usuario.id,
+            tipo_reporte="invalido",
+            periodo_inicio=date(2026, 7, 1),
+            periodo_fin=date(2026, 7, 31),
         )
         test_session.add(reporte)
         with pytest.raises(IntegrityError):
