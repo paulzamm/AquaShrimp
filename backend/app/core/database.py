@@ -1,3 +1,6 @@
+from typing import Optional
+
+from fastapi import Request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -13,8 +16,10 @@ class Base(DeclarativeBase):
     pass
 
 
-def get_db():
+def get_db(request: Request):
     db: Session = SessionLocal()
+    if hasattr(request, "state"):
+        request.state.db = db
     try:
         yield db
     finally:

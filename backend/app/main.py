@@ -47,7 +47,10 @@ app.include_router(accion_correctiva.router)
 app.include_router(cosecha.router)
 app.include_router(reporte_gerencial.router)
 
+from app.middlewares.audit import AuditMiddleware
+
 # Configuration for CORS middleware
+app.add_middleware(AuditMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
