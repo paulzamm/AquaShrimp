@@ -17,8 +17,10 @@ from app.routers import (
     reporte_gerencial,
     rol,
     sensor,
+    simulador,
     usuario,
 )
+from app.services.sensor_simulator import simulador as sensor_simulator
 
 app = FastAPI(
     title="AquaShrimp API",
@@ -48,6 +50,13 @@ app.include_router(accion_correctiva.router)
 app.include_router(cosecha.router)
 app.include_router(recomendacion_alimentacion.router)
 app.include_router(reporte_gerencial.router)
+app.include_router(simulador.router)
+
+
+@app.on_event("shutdown")
+async def stop_sensor_simulator():
+    """Detiene limpiamente el hilo de simulación de sensores al apagar la API."""
+    await sensor_simulator.stop()
 
 from app.middlewares.audit import AuditMiddleware
 

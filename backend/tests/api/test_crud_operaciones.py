@@ -47,15 +47,14 @@ def setup_auth_and_base_data(test_session: Session):
         admin_rol = Rol(nombre_rol="Administrador", descripcion="Admin role")
         test_session.add(admin_rol)
 
-    op_rol = test_session.query(Rol).filter(Rol.nombre_rol == "Operador").first()
+    op_rol = test_session.query(Rol).filter(Rol.nombre_rol == "Técnico Acuícola").first()
     if not op_rol:
-        op_rol = Rol(nombre_rol="Operador", descripcion="Operator role")
+        op_rol = Rol(nombre_rol="Técnico Acuícola", descripcion="Operator role")
         test_session.add(op_rol)
 
-    bio_rol = test_session.query(Rol).filter(Rol.nombre_rol == "Biologo").first()
-    if not bio_rol:
-        bio_rol = Rol(nombre_rol="Biologo", descripcion="Biologist role")
-        test_session.add(bio_rol)
+    # Both "op" and "bio" test users share the same Técnico Acuícola role — the
+    # backend only distinguishes Administrador / Técnico Acuícola / Gerencia.
+    bio_rol = op_rol
 
     test_session.flush()
 

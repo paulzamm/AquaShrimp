@@ -38,7 +38,7 @@ def clean_catalogos_db(test_session: Session):
         Rol.nombre_rol.in_(
             [
                 "Administrador",
-                "Operador",
+                "Técnico Acuícola",
                 "Rol_Test_01",
                 "Rol_Test_02",
             ]
@@ -55,9 +55,9 @@ def setup_auth(test_session: Session):
         admin_rol = Rol(nombre_rol="Administrador", descripcion="Admin role")
         test_session.add(admin_rol)
 
-    op_rol = test_session.query(Rol).filter(Rol.nombre_rol == "Operador").first()
+    op_rol = test_session.query(Rol).filter(Rol.nombre_rol == "Técnico Acuícola").first()
     if not op_rol:
-        op_rol = Rol(nombre_rol="Operador", descripcion="Operator role")
+        op_rol = Rol(nombre_rol="Técnico Acuícola", descripcion="Operator role")
         test_session.add(op_rol)
 
     test_session.flush()
