@@ -1,0 +1,173 @@
+@if (loading()) {
+  <app-loading-spinner label="Cargando piscinas..." />
+} @else {
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h2 class="font-headline-lg text-headline-lg text-on-surface">Monitoreo en Tiempo Real</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-1">Vista general del estado de las piscinas y sensores.</p>
+    </div>
+    <button
+      (click)="openCreatePiscina()"
+      class="px-4 py-2 bg-primary text-on-primary font-body-md text-body-md rounded-lg hover:bg-primary-container transition-colors shadow-sm flex items-center gap-2"
+    >
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      Nueva Piscina
+    </button>
+  </div>
+
+  @if (!piscinas().length) {
+    <app-empty-state icon="water" title="Aún no hay piscinas registradas" subtitle="Crea la primera piscina para comenzar el monitoreo." />
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-card-gap mt-6">
+      @for (piscina of piscinas(); track piscina.id) {
+        <div
+          role="button"
+          tabindex="0"
+          (click)="select(piscina.id)"
+          (keyup.enter)="select(piscina.id)"
+          class="bg-surface rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border transition-all cursor-pointer group"
+          [class]="selected()?.id === piscina.id ? 'ring-2 ring-secondary ring-offset-2 border-outline-variant/20' : 'border-outline-variant/20 hover:border-secondary/30'"
+        >
+          <div class="flex justify-between items-start mb-4">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-secondary">water</span>
+              <h3 class="font-headline-md text-headline-md text-on-surface">{{ piscina.codigo }}</h3>
+            </div>
+            <app-status-badge [value]="piscina.estado" />
+          </div>
+          <p class="font-caption text-caption text-on-surface-variant mb-3">{{ piscina.ubicacion }}</p>
+          <div class="grid grid-cols-2 gap-2 font-data-label text-data-label text-on-surface-variant">
+            <span>{{ piscina.area_m2 }} m²</span>
+            <span>{{ piscina.profundidad }} m prof.</span>
+          </div>
+          <div class="flex justify-end gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button (click)="openEditPiscina(piscina, $event)" class="text-outline hover:text-primary p-1">
+              <span class="material-symbols-outlined text-[18px]">edit</span>
+            </button>
+            <button (click)="confirmDeletePiscina(piscina, $event)" class="text-outline hover:text-error p-1">
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (selected(); as piscina) {
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-card-gap mt-4">
+        <div class="xl:col-span-2 bg-surface rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/20 flex flex-col">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h3 class="font-headline-md text-headline-md text-on-surface">Detalle Piscina {{ piscina.codigo }}</h3>
+              <p class="font-caption text-caption text-on-surface-variant mt-1">Lecturas registradas por sensor</p>
+            </div>
+          </div>
+          @if (loadingDetalle()) {
+            <app-loading-spinner label="Cargando sensores..." />
+          } @else if (chartData().datasets.length) {
+            <app-line-chart [data]="chartData()" [height]="280" />
+          } @else {
+            <app-empty-state icon="show_chart" title="Sin lecturas para esta piscina" />
+          }
+        </div>
+
+        <div class="flex flex-col gap-card-gap">
+          <div class="bg-surface rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/20">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-body-lg text-body-lg font-semibold text-on-surface">Sensores</h3>
+              <button (click)="openCreateSensor()" class="text-primary hover:text-primary-container">
+                <span class="material-symbols-outlined text-[20px]">add_circle</span>
+              </button>
+            </div>
+            @if (sensoresSeleccionada().length) {
+              <div class="flex flex-col gap-3">
+                @for (sensor of sensoresSeleccionada(); track sensor.id) {
+                  <div class="flex justify-between items-center p-3 rounded-lg bg-surface-container-low">
+                    <div class="flex items-center gap-3">
+                      <span class="material-symbols-outlined text-outline">{{
+                        sensor.tipo === 'temperatura' ? 'thermostat' : sensor.tipo === 'oxigeno_disuelto' ? 'air' : 'science'
+                      }}</span>
+                      <div>
+                        <span class="font-body-md text-body-md text-on-surface capitalize block">{{ sensor.tipo.replace('_', ' ') }}</span>
+                        <span class="font-caption text-caption text-on-surface-variant">{{ sensor.ubicacion || 'Sin ubicación' }}</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <app-status-badge [value]="sensor.estado" />
+                      <button (click)="openEditSensor(sensor)" class="text-outline hover:text-primary p-1">
+                        <span class="material-symbols-outlined text-[16px]">edit</span>
+                      </button>
+                      <button (click)="confirmDeleteSensor(sensor)" class="text-outline hover:text-error p-1">
+                        <span class="material-symbols-outlined text-[16px]">delete</span>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <app-empty-state icon="sensors_off" title="Sin sensores" subtitle="Agrega un sensor para esta piscina." />
+            }
+          </div>
+
+          <div class="bg-surface rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/20 flex-1">
+            <h3 class="font-body-lg text-body-lg font-semibold text-on-surface mb-4">Lecturas Recientes</h3>
+            @if (ultimasLecturas().length) {
+              <table class="w-full text-left font-data-label text-data-label text-on-surface-variant border-collapse">
+                <thead>
+                  <tr class="border-b border-outline-variant/30 text-on-surface">
+                    <th class="py-2 font-medium">Hora</th>
+                    <th class="py-2 font-medium">Valor</th>
+                    <th class="py-2 font-medium">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (lectura of ultimasLecturas(); track lectura.id) {
+                    <tr class="border-b border-outline-variant/10">
+                      <td class="py-2">{{ (lectura.fecha_hora ?? lectura.created_at) | date: 'short' }}</td>
+                      <td class="py-2">{{ lectura.valor }} {{ lectura.unidad }}</td>
+                      <td class="py-2"><app-status-badge [value]="lectura.estado_validacion" /></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            } @else {
+              <app-empty-state icon="history" title="Sin lecturas recientes" />
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
+}
+
+<app-piscina-form
+  [open]="piscinaFormOpen()"
+  [piscina]="piscinaEnEdicion()"
+  [saving]="savingPiscina()"
+  (save)="savePiscina($event)"
+  (cancelled)="piscinaFormOpen.set(false)"
+/>
+
+<app-sensor-form
+  [open]="sensorFormOpen()"
+  [sensor]="sensorEnEdicion()"
+  [idPiscina]="selectedId() ?? 0"
+  [saving]="savingSensor()"
+  (save)="saveSensor($event)"
+  (cancelled)="sensorFormOpen.set(false)"
+/>
+
+<app-confirm-dialog
+  [open]="!!piscinaAEliminar()"
+  title="Eliminar piscina"
+  [message]="'¿Deseas eliminar la piscina ' + (piscinaAEliminar()?.codigo ?? '') + '? Esta acción no se puede deshacer.'"
+  (confirmed)="deletePiscina()"
+  (cancelled)="piscinaAEliminar.set(null)"
+/>
+
+<app-confirm-dialog
+  [open]="!!sensorAEliminar()"
+  title="Eliminar sensor"
+  message="¿Deseas eliminar este sensor? Esta acción no se puede deshacer."
+  (confirmed)="deleteSensor()"
+  (cancelled)="sensorAEliminar.set(null)"
+/>

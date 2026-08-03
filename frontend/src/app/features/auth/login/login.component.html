@@ -1,0 +1,91 @@
+<div
+  class="aquatic-bg min-h-screen flex items-center justify-center p-container-padding font-body-md text-body-md text-on-surface"
+>
+  <main
+    class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-[0px_8px_30px_rgba(0,70,85,0.08)] p-8 relative z-10 border border-primary-fixed/20"
+  >
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-fixed/30 mb-4 text-primary">
+        <span class="material-symbols-outlined text-4xl">waves</span>
+      </div>
+      <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">AquaShrimp</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-2">Management System</p>
+    </div>
+
+    <form class="space-y-6" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="space-y-2">
+        <label class="font-caption text-caption text-on-surface-variant block" for="correo">Correo Electrónico</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
+          <input
+            id="correo"
+            type="email"
+            formControlName="correo"
+            placeholder="operador@aquashrimp.com"
+            class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all font-body-md text-body-md placeholder-outline-variant"
+          />
+        </div>
+        @if (form.controls.correo.invalid && form.controls.correo.touched) {
+          <p class="font-caption text-caption text-error">Ingresa un correo válido.</p>
+        }
+      </div>
+
+      <div class="space-y-2">
+        <label class="font-caption text-caption text-on-surface-variant block" for="password">Contraseña</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">lock</span>
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="••••••••"
+            class="w-full pl-10 pr-12 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all font-body-md text-body-md"
+          />
+          <button
+            type="button"
+            (click)="togglePassword()"
+            aria-label="Mostrar contraseña"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors focus:outline-none"
+          >
+            <span class="material-symbols-outlined">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <p class="font-caption text-caption text-error">La contraseña es obligatoria.</p>
+        }
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <div class="flex items-center">
+          <input
+            id="remember"
+            type="checkbox"
+            formControlName="remember"
+            class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary focus:ring-2 bg-surface"
+          />
+          <label class="ml-2 font-caption text-caption text-on-surface-variant cursor-pointer" for="remember"
+            >Recordarme</label
+          >
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="loading()"
+        class="w-full bg-primary hover:bg-primary-container text-on-primary font-body-md text-body-md font-medium py-3 rounded-lg shadow-[0px_4px_12px_rgba(0,70,85,0.2)] hover:shadow-[0px_6px_16px_rgba(0,70,85,0.3)] transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-2 disabled:opacity-60"
+      >
+        <span>{{ loading() ? 'Ingresando...' : 'Iniciar Sesión' }}</span>
+        @if (!loading()) {
+          <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        }
+      </button>
+    </form>
+
+    <div class="mt-8 text-center border-t border-outline-variant/30 pt-6">
+      <p class="font-caption text-caption text-outline">
+        Protegido por encriptación de nivel industrial.<br />
+        Uso exclusivo para personal autorizado.
+      </p>
+    </div>
+  </main>
+</div>

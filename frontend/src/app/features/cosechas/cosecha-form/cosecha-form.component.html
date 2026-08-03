@@ -1,0 +1,111 @@
+@if (open) {
+  <div class="fixed inset-0 bg-surface-dim/80 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+    <div class="bg-surface w-full max-w-2xl rounded-xl shadow-[0px_8px_30px_rgba(0,70,85,0.1)] border border-tertiary/20 flex flex-col z-50 max-h-[90vh]">
+      <div class="px-6 py-5 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-lowest">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined">waves</span>
+          </div>
+          <h2 class="font-headline-md text-headline-md text-primary">{{ cosecha ? 'Editar Cosecha' : 'Registrar Nueva Cosecha' }}</h2>
+        </div>
+        <button type="button" (click)="cancelled.emit()" class="text-on-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-surface-variant/50">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto flex-1">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex flex-col gap-2">
+            <label for="id_piscina" class="font-data-label text-data-label text-on-surface-variant">Piscina</label>
+            <select
+              id="id_piscina"
+              formControlName="id_piscina"
+              class="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary focus:outline-none"
+            >
+              <option [value]="0" disabled>Seleccionar piscina</option>
+              @for (piscina of piscinas; track piscina.id) {
+                <option [value]="piscina.id">{{ piscina.codigo }} — {{ piscina.ubicacion }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="fecha_cosecha" class="font-data-label text-data-label text-on-surface-variant">Fecha de Cosecha</label>
+            <input
+              id="fecha_cosecha"
+              type="date"
+              formControlName="fecha_cosecha"
+              class="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary focus:outline-none"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="biomasa_kg" class="font-data-label text-data-label text-on-surface-variant">Biomasa Total (kg)</label>
+            <input
+              id="biomasa_kg"
+              type="number"
+              step="0.1"
+              min="0.1"
+              formControlName="biomasa_kg"
+              placeholder="Ej: 4500.5"
+              class="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-data-label focus:ring-2 focus:ring-secondary focus:border-secondary focus:outline-none"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="talla_promedio" class="font-data-label text-data-label text-on-surface-variant">Talla Promedio (g)</label>
+            <input
+              id="talla_promedio"
+              type="number"
+              step="0.1"
+              min="0.1"
+              formControlName="talla_promedio"
+              placeholder="Ej: 15.2"
+              class="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-data-label focus:ring-2 focus:ring-secondary focus:border-secondary focus:outline-none"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2 md:col-span-2">
+            <label for="rendimiento" class="font-data-label text-data-label text-on-surface-variant">Rendimiento Estimado (%)</label>
+            <input
+              id="rendimiento"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              formControlName="rendimiento"
+              placeholder="Ej: 85.5"
+              class="w-full px-4 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface font-data-label focus:ring-2 focus:ring-secondary focus:border-secondary focus:outline-none"
+            />
+          </div>
+
+          <div class="flex flex-col gap-2 md:col-span-2">
+            <label for="observaciones" class="font-data-label text-data-label text-on-surface-variant">Observaciones</label>
+            <textarea
+              id="observaciones"
+              formControlName="observaciones"
+              rows="3"
+              placeholder="Detalles adicionales sobre la cosecha, condiciones climáticas, etc."
+              class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:ring-2 focus:ring-secondary focus:border-secondary focus:outline-none resize-none"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="px-6 py-4 border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-3">
+        <button type="button" (click)="cancelled.emit()" class="px-5 py-2.5 rounded-lg border border-secondary text-secondary font-body-md font-medium hover:bg-secondary/5 transition-colors">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          [disabled]="saving"
+          (click)="submit()"
+          class="px-5 py-2.5 rounded-lg bg-primary text-on-primary font-body-md font-medium shadow-sm hover:bg-primary-container transition-colors flex items-center gap-2 disabled:opacity-60"
+        >
+          <span class="material-symbols-outlined text-[20px]">save</span>
+          {{ saving ? 'Guardando...' : 'Registrar Cosecha' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

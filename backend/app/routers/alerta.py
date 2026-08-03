@@ -54,10 +54,10 @@ def create_alerta(
     alerta_in: AlertaCreate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Create a new alert (Requires Administrador, Operador, or Biologo role)."""
+    """Create a new alert (Requires Administrador or Técnico Acuícola role)."""
     if alerta_in.id_sensor:
         sensor = services.sensor.get_sensor(db, sensor_id=alerta_in.id_sensor)
         if not sensor:
@@ -81,10 +81,10 @@ def update_alerta(
     alerta_in: AlertaUpdate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Update an alert (Requires Administrador, Operador, or Biologo role)."""
+    """Update an alert (Requires Administrador or Técnico Acuícola role)."""
     db_alerta = services.alerta.get_alerta(db, alerta_id=alerta_id)
     if not db_alerta:
         raise HTTPException(

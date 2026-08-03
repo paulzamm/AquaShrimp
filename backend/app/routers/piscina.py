@@ -44,10 +44,10 @@ def create_piscina(
     piscina_in: PiscinaCreate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Create a new pool (Requires Administrador, Operador, or Biologo role)."""
+    """Create a new pool (Requires Administrador or Técnico Acuícola role)."""
     existing_piscina = services.piscina.get_piscina_by_codigo(
         db, codigo=piscina_in.codigo
     )
@@ -65,10 +65,10 @@ def update_piscina(
     piscina_in: PiscinaUpdate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Update a pool (Requires Administrador, Operador, or Biologo role)."""
+    """Update a pool (Requires Administrador or Técnico Acuícola role)."""
     db_piscina = services.piscina.get_piscina(db, piscina_id=piscina_id)
     if not db_piscina:
         raise HTTPException(

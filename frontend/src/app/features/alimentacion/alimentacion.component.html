@@ -1,0 +1,134 @@
+@if (loading()) {
+  <app-loading-spinner label="Cargando recomendaciones..." />
+} @else {
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h2 class="font-headline-lg text-headline-lg text-primary">Recomendaciones de Alimentación</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-1">
+        Generadas automáticamente por el motor de reglas cuando una lectura no dispara una alerta.
+      </p>
+    </div>
+    <button
+      (click)="abrirCrear()"
+      class="bg-primary text-on-primary hover:bg-primary-container px-5 py-2.5 rounded-lg font-body-md text-body-md font-medium flex items-center gap-2 transition-colors shadow-sm"
+    >
+      <span class="material-symbols-outlined">add</span>
+      Nueva Recomendación
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-card-gap mt-6">
+    <div class="bg-surface rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/20 flex flex-col justify-between">
+      <div class="flex justify-between items-start mb-4">
+        <span class="font-body-md text-body-md text-on-surface-variant">Kg Pendientes</span>
+        <div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-[18px]">scale</span>
+        </div>
+      </div>
+      <div>
+        <span class="font-display text-display text-primary font-data-label">{{ totalKgPendiente() }}</span>
+        <span class="font-body-md text-body-md text-on-surface-variant ml-1">kg</span>
+      </div>
+    </div>
+
+    <div class="bg-surface rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/20 flex flex-col justify-between">
+      <div class="flex justify-between items-start mb-4">
+        <span class="font-body-md text-body-md text-on-surface-variant">Recomendaciones Pendientes</span>
+        <div class="w-8 h-8 rounded-full bg-secondary-container/50 flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary text-[18px]">pending_actions</span>
+        </div>
+      </div>
+      <div>
+        <span class="font-display text-display text-on-surface font-data-label">{{ pendientes().length }}</span>
+      </div>
+    </div>
+
+    <div class="bg-primary rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.15)] flex flex-col justify-between text-on-primary">
+      <div class="flex justify-between items-start mb-4">
+        <span class="font-body-md text-body-md opacity-90">Aplicadas (histórico)</span>
+        <div class="w-8 h-8 rounded-full bg-on-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[18px]">check_circle</span>
+        </div>
+      </div>
+      <div>
+        <span class="font-display text-display font-data-label">{{ aplicadasCount() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-surface rounded-xl shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/20 overflow-hidden flex flex-col mt-6">
+    <div class="p-5 border-b border-outline-variant/20">
+      <h3 class="font-headline-md text-headline-md text-on-surface">Listado de Recomendaciones</h3>
+    </div>
+    @if (recomendacionesOrdenadas().length) {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-container-low text-on-surface-variant font-caption text-caption uppercase tracking-wider">
+              <th class="p-3 pl-5">Piscina</th>
+              <th class="p-3">Cantidad (kg)</th>
+              <th class="p-3">Frecuencia</th>
+              <th class="p-3">Criterio</th>
+              <th class="p-3">Estado</th>
+              <th class="p-3 pr-5 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="font-body-md text-body-md text-on-surface divide-y divide-outline-variant/10">
+            @for (r of recomendacionesOrdenadas(); track r.id) {
+              <tr class="hover:bg-primary/5 transition-colors group">
+                <td class="p-3 pl-5 font-data-label text-data-label text-primary">{{ codigoPiscina(r.id_piscina) }}</td>
+                <td class="p-3 font-data-label text-data-label">{{ r.cantidad_kg }}</td>
+                <td class="p-3 text-on-surface-variant">{{ r.frecuencia }}</td>
+                <td class="p-3 text-on-surface-variant">{{ r.criterio || '—' }}</td>
+                <td class="p-3"><app-status-badge [value]="r.estado" /></td>
+                <td class="p-3 pr-5">
+                  <div class="flex justify-end gap-2">
+                    @if (r.estado === 'pendiente') {
+                      <button
+                        (click)="cambiarEstado(r, 'rechazada')"
+                        class="px-3 py-1 border border-secondary text-secondary hover:bg-secondary/5 rounded font-caption text-caption transition-colors"
+                      >
+                        Descartar
+                      </button>
+                      <button
+                        (click)="cambiarEstado(r, 'aplicada')"
+                        class="px-3 py-1 bg-primary text-on-primary hover:bg-primary-container rounded font-caption text-caption transition-colors shadow-sm"
+                      >
+                        Aplicar
+                      </button>
+                    }
+                    <button (click)="abrirEditar(r)" class="text-outline hover:text-primary p-1">
+                      <span class="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
+                    <button (click)="confirmarEliminar(r)" class="text-outline hover:text-error p-1">
+                      <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <app-empty-state icon="set_meal" title="Sin recomendaciones registradas" subtitle="Se generan automáticamente al registrar lecturas sin alertas, o puedes crear una manualmente." />
+    }
+  </div>
+}
+
+<app-alimentacion-form
+  [open]="formOpen()"
+  [recomendacion]="enEdicion()"
+  [piscinas]="piscinas()"
+  [saving]="saving()"
+  (save)="guardar($event)"
+  (cancelled)="formOpen.set(false)"
+/>
+
+<app-confirm-dialog
+  [open]="!!aEliminar()"
+  title="Eliminar recomendación"
+  message="¿Deseas eliminar esta recomendación de alimentación? Esta acción no se puede deshacer."
+  (confirmed)="eliminar()"
+  (cancelled)="aEliminar.set(null)"
+/>

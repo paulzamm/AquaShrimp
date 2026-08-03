@@ -1,0 +1,96 @@
+@if (open) {
+  <div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+    <div class="bg-surface rounded-xl shadow-[0px_16px_48px_rgba(0,95,115,0.12)] border border-tertiary/20 w-full max-w-[600px] flex flex-col max-h-[90vh]">
+      <div class="px-6 py-5 border-b border-outline-variant/30 flex justify-between items-center bg-surface-bright">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined">analytics</span>
+          </div>
+          <div>
+            <h2 class="font-headline-md text-headline-md text-primary">{{ reporte ? 'Editar Reporte' : 'Generar Nuevo Reporte' }}</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant/80 text-sm mt-0.5">
+              Configure los parámetros del reporte gerencial.
+            </p>
+          </div>
+        </div>
+        <button type="button" (click)="cancelled.emit()" class="text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors rounded-full p-2">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto flex-1">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
+            <label for="tipo_reporte" class="font-data-label text-data-label text-on-surface">Tipo de Reporte</label>
+            <select
+              id="tipo_reporte"
+              formControlName="tipo_reporte"
+              class="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:border-secondary transition-all"
+            >
+              <option value="rendimiento">Rendimiento</option>
+              <option value="alertas">Alertas</option>
+              <option value="alimentacion">Alimentación</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface-container-low p-4 rounded-lg border border-outline-variant/30">
+            <div class="col-span-full">
+              <h3 class="font-data-label text-data-label text-on-surface flex items-center gap-2 mb-1">
+                <span class="material-symbols-outlined text-[18px]">calendar_month</span> Rango de Fechas
+              </h3>
+              @if (form.errors?.['periodoInvalido']) {
+                <p class="text-xs text-error">La fecha de fin debe ser mayor o igual a la de inicio.</p>
+              }
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="periodo_inicio" class="text-xs font-medium text-on-surface-variant">Desde</label>
+              <input
+                id="periodo_inicio"
+                type="date"
+                formControlName="periodo_inicio"
+                class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-md text-body-md text-on-surface focus:border-secondary transition-all"
+              />
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="periodo_fin" class="text-xs font-medium text-on-surface-variant">Hasta</label>
+              <input
+                id="periodo_fin"
+                type="date"
+                formControlName="periodo_fin"
+                class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 font-body-md text-body-md text-on-surface focus:border-secondary transition-all"
+              />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label for="id_usuario" class="font-data-label text-data-label text-on-surface">ID de Usuario (autor) *</label>
+            <input
+              id="id_usuario"
+              type="number"
+              formControlName="id_usuario"
+              class="w-full max-w-[200px] bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:border-secondary transition-all"
+            />
+            <p class="font-caption text-caption text-on-surface-variant">
+              Se autocompleta con tu usuario; puedes cambiarlo si el reporte se genera para otro autor.
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <div class="px-6 py-4 border-t border-outline-variant/30 bg-surface-bright flex justify-end gap-3">
+        <button type="button" (click)="cancelled.emit()" class="px-5 py-2.5 font-data-label text-data-label text-primary border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          [disabled]="saving"
+          (click)="submit()"
+          class="px-6 py-2.5 font-data-label text-data-label bg-primary text-on-primary rounded-lg hover:bg-primary-container transition-all shadow-sm flex items-center justify-center min-w-[140px] gap-2 disabled:opacity-60"
+        >
+          <span class="material-symbols-outlined text-[20px]">magic_button</span>
+          {{ saving ? 'Guardando...' : 'Generar Reporte' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

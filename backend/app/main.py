@@ -13,6 +13,7 @@ from app.routers import (
     cosecha,
     lecturas,
     piscina,
+    recomendacion_alimentacion,
     reporte_gerencial,
     rol,
     sensor,
@@ -45,6 +46,7 @@ app.include_router(lecturas.router)
 app.include_router(alerta.router)
 app.include_router(accion_correctiva.router)
 app.include_router(cosecha.router)
+app.include_router(recomendacion_alimentacion.router)
 app.include_router(reporte_gerencial.router)
 
 from app.middlewares.audit import AuditMiddleware

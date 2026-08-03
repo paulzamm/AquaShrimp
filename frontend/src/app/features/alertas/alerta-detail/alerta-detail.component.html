@@ -1,0 +1,123 @@
+@if (open && alerta) {
+  <div class="fixed inset-0 bg-on-background/40 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+    <div
+      class="bg-surface rounded-xl shadow-[0px_8px_32px_rgba(0,70,85,0.1)] border border-tertiary/20 w-full max-w-3xl max-h-[90vh] overflow-y-auto flex flex-col relative z-50"
+    >
+      <div
+        class="px-6 py-5 border-b flex justify-between items-start sticky top-0 z-10"
+        [class]="alerta.severidad === 'critica' || alerta.severidad === 'alta' ? 'border-error/20 bg-error-container/30' : 'border-outline-variant/20 bg-surface-container-low'"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center"
+            [class]="alerta.severidad === 'critica' || alerta.severidad === 'alta' ? 'bg-error/10 text-error' : 'bg-secondary-container/30 text-secondary'"
+          >
+            <span class="material-symbols-outlined">warning</span>
+          </div>
+          <div>
+            <h2
+              class="font-headline-md text-headline-md capitalize"
+              [class]="alerta.severidad === 'critica' || alerta.severidad === 'alta' ? 'text-error' : 'text-on-surface'"
+            >
+              {{ alerta.tipo_alerta.replace('_', ' ') }}
+            </h2>
+            <p class="font-caption text-caption text-on-surface-variant mt-1">
+              ID: ALR-{{ alerta.id }} • Severidad: {{ alerta.severidad }}
+            </p>
+          </div>
+        </div>
+        <button type="button" (click)="cancelled.emit()" class="text-on-surface-variant hover:text-on-surface p-1 rounded-full hover:bg-surface-container-high">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 flex-1 flex flex-col gap-6">
+        <section>
+          <h3 class="font-data-label text-data-label text-on-surface mb-3 uppercase tracking-wider">Detalles</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-4 shadow-sm">
+              <p class="font-caption text-caption text-on-surface-variant">Sensor</p>
+              <p class="font-body-md text-body-md font-medium text-on-surface">{{ alerta.id_sensor ?? '—' }}</p>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-4 shadow-sm">
+              <p class="font-caption text-caption text-on-surface-variant">Valor Medido</p>
+              <p class="font-data-label text-data-label text-xl font-bold text-on-surface">
+                {{ alerta.valor_medido ?? '—' }}
+              </p>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-lg p-4 shadow-sm md:col-span-2">
+              <p class="font-caption text-caption text-on-surface-variant">Descripción</p>
+              <p class="font-body-md text-body-md text-on-surface mt-1">{{ alerta.descripcion }}</p>
+            </div>
+          </div>
+        </section>
+
+        <hr class="border-outline-variant/30" />
+
+        @if (alerta.estado !== 'cerrada') {
+          <section>
+            <h3 class="font-data-label text-data-label text-on-surface mb-4 uppercase tracking-wider">Registro de Intervención</h3>
+            <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+              <div>
+                <label for="descripcion" class="block font-data-label text-data-label text-on-surface mb-1">Acción Realizada *</label>
+                <textarea
+                  id="descripcion"
+                  formControlName="descripcion"
+                  rows="3"
+                  placeholder="Describa las acciones correctivas implementadas..."
+                  class="w-full bg-surface-container-low border-outline-variant rounded-lg p-3 font-body-md text-body-md text-on-surface focus:border-secondary focus:ring focus:ring-secondary/20 transition-shadow resize-y"
+                ></textarea>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="resultado" class="block font-data-label text-data-label text-on-surface mb-1">Resultado Observado</label>
+                  <input
+                    id="resultado"
+                    formControlName="resultado"
+                    placeholder="Ej: Niveles estabilizados en 4.5 mg/L"
+                    class="w-full bg-surface-container-low border-outline-variant rounded-lg p-3 font-body-md text-body-md text-on-surface focus:border-secondary focus:ring focus:ring-secondary/20 transition-shadow"
+                  />
+                </div>
+                <div>
+                  <label for="nuevoEstado" class="block font-data-label text-data-label text-on-surface mb-1">Estado de la Alerta *</label>
+                  <select
+                    id="nuevoEstado"
+                    formControlName="nuevoEstado"
+                    class="w-full bg-surface-container-low border-outline-variant rounded-lg p-3 font-body-md text-body-md text-on-surface focus:border-secondary focus:ring focus:ring-secondary/20 transition-shadow"
+                  >
+                    <option value="atendida">Atendida — en seguimiento</option>
+                    <option value="cerrada">Cerrada — resuelta</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </section>
+        } @else {
+          <p class="font-body-md text-body-md text-on-surface-variant">Esta alerta ya fue cerrada.</p>
+        }
+      </div>
+
+      <div class="px-6 py-4 border-t border-outline-variant/30 bg-surface-container-lowest flex justify-end gap-3 sticky bottom-0 z-10 rounded-b-xl">
+        <button
+          type="button"
+          (click)="cancelled.emit()"
+          class="px-4 py-2 rounded-lg font-data-label text-data-label font-medium border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors"
+        >
+          Cancelar
+        </button>
+        @if (alerta.estado !== 'cerrada') {
+          <button
+            type="button"
+            [disabled]="saving"
+            (click)="submit()"
+            class="px-6 py-2 rounded-lg font-data-label text-data-label font-medium bg-primary text-on-primary shadow-sm hover:bg-primary-container transition-colors flex items-center gap-2 disabled:opacity-60"
+          >
+            <span class="material-symbols-outlined text-[18px]">done_all</span>
+            {{ saving ? 'Guardando...' : 'Registrar acción' }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}

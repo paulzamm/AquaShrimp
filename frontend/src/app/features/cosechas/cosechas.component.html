@@ -1,0 +1,121 @@
+@if (loading()) {
+  <app-loading-spinner label="Cargando cosechas..." />
+} @else {
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <h2 class="font-headline-lg text-headline-lg text-on-surface">Cosecha y Producción</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant mt-1">Gestión de rendimiento y biomasa extraída.</p>
+    </div>
+    <button
+      (click)="abrirCrear()"
+      class="bg-primary text-on-primary hover:bg-primary-container transition-colors px-6 py-2.5 rounded-lg font-body-md text-body-md font-medium flex items-center gap-2 shadow-sm"
+    >
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      Registrar Nueva Cosecha
+    </button>
+  </div>
+
+  <div class="grid grid-cols-12 gap-card-gap mt-6">
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-surface rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/10">
+      <p class="font-caption text-caption text-on-surface-variant uppercase tracking-wider mb-2">Biomasa Total</p>
+      <div class="flex items-baseline gap-2">
+        <h3 class="font-data-label text-[28px] leading-tight text-on-background">{{ biomasaTotal() | number: '1.0-0' }}</h3>
+        <span class="font-caption text-caption text-on-surface-variant">kg</span>
+      </div>
+    </div>
+
+    <div class="col-span-12 sm:col-span-6 lg:col-span-3 bg-surface rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/10">
+      <p class="font-caption text-caption text-on-surface-variant uppercase tracking-wider mb-2">Talla Promedio</p>
+      <div class="flex items-baseline gap-2">
+        <h3 class="font-data-label text-[28px] leading-tight text-on-background">
+          {{ tallaPromedio() !== null ? (tallaPromedio() | number: '1.1-1') : '—' }}
+        </h3>
+        <span class="font-caption text-caption text-on-surface-variant">g</span>
+      </div>
+    </div>
+
+    <div class="col-span-12 lg:col-span-6 bg-surface rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/10 flex flex-col">
+      <h3 class="font-headline-md text-[18px] font-semibold text-on-background mb-4">Producción por Piscina</h3>
+      @if (produccionPorPiscina().length) {
+        <div class="flex-1 flex items-end justify-between gap-2 mt-2 pt-4 border-t border-outline-variant/10 h-[120px]">
+          @for (item of produccionPorPiscina(); track item.codigo) {
+            <div class="w-full flex flex-col items-center gap-2 group">
+              <div class="relative w-full flex justify-center">
+                <div
+                  class="w-8 bg-primary-container rounded-t-sm group-hover:bg-primary transition-colors"
+                  [style.height.px]="barHeight(item.porcentaje)"
+                ></div>
+                <div class="absolute -top-6 font-data-label text-[10px] text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
+                  {{ item.totalKg | number: '1.0-0' }}
+                </div>
+              </div>
+              <span class="font-caption text-[10px] text-on-surface-variant">{{ item.codigo }}</span>
+            </div>
+          }
+        </div>
+      } @else {
+        <app-empty-state icon="bar_chart" title="Sin cosechas registradas" />
+      }
+    </div>
+
+    <div class="col-span-12 bg-surface rounded-xl shadow-[0px_4px_20px_rgba(0,95,115,0.05)] border border-outline-variant/10 overflow-hidden">
+      <div class="px-6 py-5 border-b border-outline-variant/20 bg-surface-bright">
+        <h3 class="font-headline-md text-[18px] font-semibold text-on-background">Historial de Cosechas</h3>
+      </div>
+      @if (cosechasOrdenadas().length) {
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-lowest border-b border-outline-variant/20">
+                <th class="px-6 py-3 font-caption text-caption text-on-surface-variant font-semibold uppercase tracking-wider">Fecha</th>
+                <th class="px-6 py-3 font-caption text-caption text-on-surface-variant font-semibold uppercase tracking-wider">Piscina</th>
+                <th class="px-6 py-3 font-caption text-caption text-on-surface-variant font-semibold uppercase tracking-wider text-right">Biomasa (kg)</th>
+                <th class="px-6 py-3 font-caption text-caption text-on-surface-variant font-semibold uppercase tracking-wider text-right">Talla Prom. (g)</th>
+                <th class="px-6 py-3 font-caption text-caption text-on-surface-variant font-semibold uppercase tracking-wider text-right">Rendimiento (%)</th>
+                <th class="px-6 py-3 font-caption text-caption text-on-surface-variant font-semibold uppercase tracking-wider text-center w-24">Acciones</th>
+              </tr>
+            </thead>
+            <tbody class="font-body-md text-[14px]">
+              @for (cosecha of cosechasOrdenadas(); track cosecha.id) {
+                <tr class="zebra-row border-b border-outline-variant/10 hover:bg-primary/[0.02] transition-colors">
+                  <td class="px-6 py-3 whitespace-nowrap text-on-background">{{ cosecha.fecha_cosecha | date: 'mediumDate' }}</td>
+                  <td class="px-6 py-3 whitespace-nowrap font-data-label text-on-surface-variant">{{ codigoPiscina(cosecha.id_piscina) }}</td>
+                  <td class="px-6 py-3 whitespace-nowrap font-data-label text-right">{{ cosecha.biomasa_kg | number: '1.0-1' }}</td>
+                  <td class="px-6 py-3 whitespace-nowrap font-data-label text-right">{{ cosecha.talla_promedio ?? '—' }}</td>
+                  <td class="px-6 py-3 whitespace-nowrap font-data-label text-right">{{ cosecha.rendimiento ?? '—' }}</td>
+                  <td class="px-6 py-3 whitespace-nowrap text-center">
+                    <button (click)="abrirEditar(cosecha)" class="text-outline hover:text-primary p-1">
+                      <span class="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
+                    <button (click)="confirmarEliminar(cosecha)" class="text-outline hover:text-error p-1">
+                      <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <app-empty-state icon="waves" title="Aún no hay cosechas registradas" />
+      }
+    </div>
+  </div>
+}
+
+<app-cosecha-form
+  [open]="formOpen()"
+  [cosecha]="enEdicion()"
+  [piscinas]="piscinas()"
+  [saving]="saving()"
+  (save)="guardar($event)"
+  (cancelled)="formOpen.set(false)"
+/>
+
+<app-confirm-dialog
+  [open]="!!aEliminar()"
+  title="Eliminar cosecha"
+  message="¿Deseas eliminar este registro de cosecha? Esta acción no se puede deshacer."
+  (confirmed)="eliminar()"
+  (cancelled)="aEliminar.set(null)"
+/>

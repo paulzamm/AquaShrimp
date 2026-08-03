@@ -1,0 +1,87 @@
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+  <div>
+    <h2 class="font-headline-lg text-headline-lg text-on-surface">Reportes Gerenciales</h2>
+    <p class="font-body-md text-body-md text-on-surface-variant mt-1">Gestione y visualice el histórico de reportes generados.</p>
+  </div>
+  <button
+    (click)="abrirCrear()"
+    class="bg-primary text-on-primary hover:bg-primary-container px-6 py-3 rounded-lg font-body-md text-body-md font-medium flex items-center gap-2 transition-colors shadow-sm"
+  >
+    <span class="material-symbols-outlined">add</span>
+    Generar Nuevo Reporte
+  </button>
+</div>
+
+<div class="bg-surface border border-outline-variant/30 rounded-xl p-4 shadow-[0px_4px_20px_rgba(0,95,115,0.02)] flex flex-wrap gap-4 items-end mt-6">
+  <div class="flex-1 min-w-[200px]">
+    <label for="filtro-tipo-reporte" class="block font-caption text-caption text-on-surface-variant mb-1">Tipo de Reporte</label>
+    <select
+      id="filtro-tipo-reporte"
+      class="w-full pl-4 pr-10 py-2 bg-surface-container-lowest border border-outline-variant/60 rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50"
+      (change)="onFiltroChange($any($event.target).value)"
+    >
+      <option value="">Todos los Tipos</option>
+      <option value="rendimiento">Rendimiento</option>
+      <option value="alertas">Alertas</option>
+      <option value="alimentacion">Alimentación</option>
+    </select>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading-spinner label="Cargando reportes..." />
+} @else if (!reportes().length) {
+  <app-empty-state icon="assessment" title="No hay reportes para este filtro" subtitle="Genera el primer reporte gerencial." />
+} @else {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-card-gap mt-6">
+    @for (reporte of reportes(); track reporte.id) {
+      <div class="bg-surface rounded-xl border border-outline-variant/20 p-5 shadow-[0px_4px_20px_rgba(0,95,115,0.05)] hover:shadow-[0px_4px_20px_rgba(0,95,115,0.1)] transition-shadow flex flex-col group relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1 h-full bg-secondary-fixed"></div>
+        <div class="flex justify-between items-start mb-4">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/30 text-secondary font-caption text-caption capitalize">
+            <span class="material-symbols-outlined text-[16px]">{{ icono(reporte.tipo_reporte) }}</span>
+            {{ reporte.tipo_reporte }}
+          </span>
+          <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button (click)="abrirEditar(reporte)" class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-md" title="Editar">
+              <span class="material-symbols-outlined text-[20px]">edit</span>
+            </button>
+            <button (click)="confirmarEliminar(reporte)" class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container-low rounded-md" title="Eliminar">
+              <span class="material-symbols-outlined text-[20px]">delete</span>
+            </button>
+          </div>
+        </div>
+        <h3 class="font-headline-md text-headline-md text-on-surface !text-xl mb-1">Reporte #{{ reporte.id }}</h3>
+        <p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-1">Autor: usuario #{{ reporte.id_usuario }}</p>
+        <div class="mt-auto flex justify-between items-center pt-4 border-t border-outline-variant/20">
+          <div class="flex flex-col">
+            <span class="font-caption text-caption text-on-surface-variant">Período</span>
+            <span class="font-data-label text-data-label text-on-surface">
+              {{ reporte.periodo_inicio | date: 'mediumDate' }} — {{ reporte.periodo_fin | date: 'mediumDate' }}
+            </span>
+          </div>
+          <div class="flex flex-col text-right">
+            <span class="font-caption text-caption text-on-surface-variant">Generado</span>
+            <span class="font-data-label text-data-label text-on-surface">{{ (reporte.fecha_generacion ?? reporte.created_at) | date: 'short' }}</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<app-reporte-form
+  [open]="formOpen()"
+  [reporte]="enEdicion()"
+  [saving]="saving()"
+  (save)="guardar($event)"
+  (cancelled)="formOpen.set(false)"
+/>
+
+<app-confirm-dialog
+  [open]="!!aEliminar()"
+  title="Eliminar reporte"
+  message="¿Deseas eliminar este reporte gerencial? Esta acción no se puede deshacer."
+  (confirmed)="eliminar()"
+  (cancelled)="aEliminar.set(null)"
+/>

@@ -1,0 +1,179 @@
+@if (loading()) {
+  <app-loading-spinner label="Cargando panel gerencial..." />
+} @else {
+  <div class="flex justify-between items-end mb-6 flex-wrap gap-4">
+    <div>
+      <h1 class="font-headline-lg text-headline-lg text-primary mb-1">DASHBOARD GERENCIAL</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant">
+        Visión general del estado operativo e indicadores clave de rendimiento.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Filtro de Vista:</span>
+      <select
+        class="bg-surface-container-lowest border border-outline-variant/50 rounded-md py-1.5 pl-3 pr-8 font-data-label text-data-label text-primary focus:ring-2 focus:ring-secondary/50 focus:border-secondary shadow-sm"
+        (change)="onFiltroChange($any($event.target).value)"
+      >
+        <option value="">Todas las Piscinas</option>
+        @for (piscina of piscinas(); track piscina.id) {
+          <option [value]="piscina.id">{{ piscina.codigo }} — {{ piscina.ubicacion }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-card-gap mb-8">
+    <div class="bg-surface shadow-[0px_4px_20px_rgba(0,95,115,0.05)] rounded-lg p-5 border border-outline-variant/10 flex flex-col justify-between">
+      <div class="flex justify-between items-start mb-2">
+        <span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Piscinas Activas</span>
+        <div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
+          <span class="material-symbols-outlined text-[18px]">waves</span>
+        </div>
+      </div>
+      <div class="font-data-label text-[32px] leading-tight text-primary font-semibold">
+        {{ piscinasActivas() }}<span class="text-lg text-on-surface-variant font-normal">/{{ totalPiscinas() }}</span>
+      </div>
+    </div>
+
+    <div
+      class="bg-surface shadow-[0px_4px_20px_rgba(0,95,115,0.05)] rounded-lg p-5 border flex flex-col justify-between relative overflow-hidden"
+      [class]="alertasCriticas() > 0 ? 'border-error/20' : 'border-outline-variant/10'"
+    >
+      @if (alertasCriticas() > 0) {
+        <div class="absolute right-0 top-0 w-2 h-full bg-error"></div>
+      }
+      <div class="flex justify-between items-start mb-2">
+        <span
+          class="font-caption text-caption uppercase tracking-wider"
+          [class]="alertasCriticas() > 0 ? 'text-error font-semibold' : 'text-on-surface-variant'"
+          >Alertas Críticas</span
+        >
+        <div
+          class="w-8 h-8 rounded-full flex items-center justify-center"
+          [class]="alertasCriticas() > 0 ? 'bg-error-container text-error' : 'bg-secondary-container/30 text-secondary'"
+        >
+          <span class="material-symbols-outlined text-[18px]">warning</span>
+        </div>
+      </div>
+      <div
+        class="font-data-label text-[32px] leading-tight font-semibold"
+        [class]="alertasCriticas() > 0 ? 'text-error' : 'text-primary'"
+      >
+        {{ alertasCriticas() }}
+      </div>
+    </div>
+
+    <div class="bg-surface shadow-[0px_4px_20px_rgba(0,95,115,0.05)] rounded-lg p-5 border border-outline-variant/10 flex flex-col justify-between">
+      <div class="flex justify-between items-start mb-2">
+        <span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Promedio Temp Agua</span>
+        <div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
+          <span class="material-symbols-outlined text-[18px]">device_thermostat</span>
+        </div>
+      </div>
+      <div class="font-data-label text-[32px] leading-tight text-primary font-semibold">
+        @if (promedioTemperatura() !== null) {
+          {{ promedioTemperatura()!.toFixed(1) }}<span class="text-lg text-on-surface-variant font-normal">°C</span>
+        } @else {
+          <span class="text-lg text-on-surface-variant">Sin datos</span>
+        }
+      </div>
+    </div>
+
+    <div class="bg-surface shadow-[0px_4px_20px_rgba(0,95,115,0.05)] rounded-lg p-5 border border-outline-variant/10 flex flex-col justify-between">
+      <div class="flex justify-between items-start mb-2">
+        <span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider">Oxígeno Disuelto</span>
+        <div class="w-8 h-8 rounded-full bg-secondary-container/30 flex items-center justify-center text-secondary">
+          <span class="material-symbols-outlined text-[18px]">air</span>
+        </div>
+      </div>
+      <div class="font-data-label text-[32px] leading-tight text-primary font-semibold">
+        @if (promedioOxigeno() !== null) {
+          {{ promedioOxigeno()!.toFixed(1) }}<span class="text-lg text-on-surface-variant font-normal">mg/L</span>
+        } @else {
+          <span class="text-lg text-on-surface-variant">Sin datos</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-card-gap">
+    <div class="lg:col-span-2 bg-surface shadow-[0px_4px_20px_rgba(0,95,115,0.05)] rounded-lg p-6 border border-outline-variant/10 flex flex-col">
+      <div class="flex justify-between items-center mb-6 border-b border-outline-variant/20 pb-4">
+        <div>
+          <h2 class="font-headline-md text-headline-md text-primary">Evolución de Temperatura</h2>
+          <p class="font-caption text-caption text-on-surface-variant">Lecturas registradas por sensor de temperatura</p>
+        </div>
+      </div>
+      @if (chartData().datasets.length) {
+        <app-line-chart [data]="chartData()" [height]="300" />
+      } @else {
+        <app-empty-state icon="show_chart" title="Sin lecturas de temperatura" subtitle="Aún no se han registrado lecturas para este filtro." />
+      }
+    </div>
+
+    <div class="flex flex-col gap-card-gap">
+      <div class="bg-surface shadow-[0px_4px_20px_rgba(0,95,115,0.05)] rounded-lg p-5 border border-outline-variant/10 flex-1">
+        <h3 class="font-body-lg text-body-lg text-primary font-semibold border-b border-outline-variant/20 pb-3 mb-4 flex items-center justify-between">
+          Alertas Activas
+          @if (alertasCriticas() > 0) {
+            <span class="bg-error-container text-error text-[10px] px-2 py-0.5 rounded-full font-bold"
+              >{{ alertasCriticas() }} CRÍTICAS</span
+            >
+          }
+        </h3>
+        @if (alertasActivas().length) {
+          <div class="flex flex-col gap-3">
+            @for (alerta of alertasActivas().slice(0, 5); track alerta.id) {
+              <div
+                class="bg-surface-container-lowest border-l-4 p-3 rounded-r-md shadow-sm"
+                [class]="alerta.severidad === 'critica' || alerta.severidad === 'alta' ? 'border-error' : 'border-tertiary-fixed-dim'"
+              >
+                <div class="flex justify-between items-start mb-1">
+                  <span
+                    class="font-data-label text-[12px] font-bold capitalize"
+                    [class]="alerta.severidad === 'critica' || alerta.severidad === 'alta' ? 'text-error' : 'text-on-surface-variant'"
+                    >{{ alerta.tipo_alerta.replace('_', ' ') }}</span
+                  >
+                  <span class="text-[10px] text-on-surface-variant">{{ alerta.severidad }}</span>
+                </div>
+                <p class="text-[11px] text-on-surface-variant">{{ alerta.descripcion }}</p>
+              </div>
+            }
+          </div>
+        } @else {
+          <app-empty-state icon="check_circle" title="Sin alertas activas" />
+        }
+      </div>
+
+      <div class="bg-surface shadow-[0px_4px_20px_rgba(0,95,115,0.05)] rounded-lg p-5 border border-outline-variant/10">
+        <h3 class="font-body-lg text-body-lg text-primary font-semibold border-b border-outline-variant/20 pb-3 mb-4">
+          Últimas Lecturas de Sensor
+        </h3>
+        @if (ultimasLecturas().length) {
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="text-[10px] text-on-surface-variant uppercase tracking-wider font-caption border-b border-outline-variant/20">
+                <th class="pb-2 font-medium">Piscina</th>
+                <th class="pb-2 font-medium">Tipo</th>
+                <th class="pb-2 font-medium">Valor</th>
+                <th class="pb-2 font-medium">Validación</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm font-data-label">
+              @for (lectura of ultimasLecturas(); track lectura.id) {
+                <tr class="border-b border-outline-variant/10">
+                  <td class="py-2.5 text-primary">{{ lectura.piscina?.codigo ?? '—' }}</td>
+                  <td class="py-2.5 capitalize">{{ lectura.sensor?.tipo?.replace('_', ' ') ?? '—' }}</td>
+                  <td class="py-2.5">{{ lectura.valor }} {{ lectura.unidad }}</td>
+                  <td class="py-2.5"><app-status-badge [value]="lectura.estado_validacion" /></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <app-empty-state icon="sensors_off" title="Sin lecturas registradas" />
+        }
+      </div>
+    </div>
+  </div>
+}

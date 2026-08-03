@@ -1,0 +1,14 @@
+<div class="fixed top-4 right-4 z-[100] flex flex-col gap-3 w-full max-w-sm">
+  @for (toast of notifications.toasts(); track toast.id) {
+    <div
+      class="flex items-start gap-3 rounded-xl border p-4 shadow-[0px_4px_20px_rgba(0,95,115,0.1)]"
+      [class]="colorClassFor(toast.type)"
+    >
+      <span class="material-symbols-outlined text-[20px]">{{ iconFor(toast.type) }}</span>
+      <p class="font-body-md text-body-md flex-1">{{ toast.message }}</p>
+      <button type="button" (click)="notifications.dismiss(toast.id)" class="text-current/70 hover:text-current">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+  }
+</div>

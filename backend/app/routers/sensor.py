@@ -47,10 +47,10 @@ def create_sensor(
     sensor_in: SensorCreate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Create a new sensor (Requires Administrador, Operador, or Biologo role)."""
+    """Create a new sensor (Requires Administrador or Técnico Acuícola role)."""
     db_piscina = services.piscina.get_piscina(db, piscina_id=sensor_in.id_piscina)
     if not db_piscina:
         raise HTTPException(
@@ -66,10 +66,10 @@ def update_sensor(
     sensor_in: SensorUpdate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Update a sensor (Requires Administrador, Operador, or Biologo role)."""
+    """Update a sensor (Requires Administrador or Técnico Acuícola role)."""
     db_sensor = services.sensor.get_sensor(db, sensor_id=sensor_id)
     if not db_sensor:
         raise HTTPException(

@@ -47,10 +47,10 @@ def create_cosecha(
     cosecha_in: CosechaCreate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Create a new harvest (Requires Administrador, Operador, or Biologo role)."""
+    """Create a new harvest (Requires Administrador or Técnico Acuícola role)."""
     piscina = services.piscina.get_piscina(db, piscina_id=cosecha_in.id_piscina)
     if not piscina:
         raise HTTPException(
@@ -66,10 +66,10 @@ def update_cosecha(
     cosecha_in: CosechaUpdate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Update a harvest (Requires Administrador, Operador, or Biologo role)."""
+    """Update a harvest (Requires Administrador or Técnico Acuícola role)."""
     db_cosecha = services.cosecha.get_cosecha(db, cosecha_id=cosecha_id)
     if not db_cosecha:
         raise HTTPException(

@@ -1,0 +1,132 @@
+/* AquaShrimp design tokens — source of truth: stitch templates/aquashrimp_design_system/DESIGN.md */
+:root {
+  --color-surface: #fcf9f8;
+  --color-surface-dim: #dcd9d9;
+  --color-surface-bright: #fcf9f8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3f2;
+  --color-surface-container: #f0edec;
+  --color-surface-container-high: #ebe7e7;
+  --color-surface-container-highest: #e5e2e1;
+  --color-on-surface: #1c1b1b;
+  --color-on-surface-variant: #3f484c;
+  --color-inverse-surface: #313030;
+  --color-inverse-on-surface: #f3f0ef;
+  --color-outline: #6f797c;
+  --color-outline-variant: #bfc8cc;
+  --color-surface-tint: #13677b;
+  --color-primary: #004655;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #005f73;
+  --color-on-primary-container: #91d7ee;
+  --color-inverse-primary: #8bd1e8;
+  --color-secondary: #00696c;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #86f0f3;
+  --color-on-secondary-container: #006e70;
+  --color-tertiary: #00493a;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #226150;
+  --color-on-tertiary-container: #9bd9c4;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #b2ebff;
+  --color-primary-fixed-dim: #8bd1e8;
+  --color-on-primary-fixed: #001f27;
+  --color-on-primary-fixed-variant: #004e5f;
+  --color-secondary-fixed: #89f3f6;
+  --color-secondary-fixed-dim: #6bd7da;
+  --color-on-secondary-fixed: #002021;
+  --color-on-secondary-fixed-variant: #004f51;
+  --color-tertiary-fixed: #b0efda;
+  --color-tertiary-fixed-dim: #95d3be;
+  --color-on-tertiary-fixed: #002018;
+  --color-on-tertiary-fixed-variant: #0b5040;
+  --color-background: #fcf9f8;
+  --color-on-background: #1c1b1b;
+  --color-surface-variant: #e5e2e1;
+}
+
+:root.dark {
+  --color-surface: #0f1720;
+  --color-surface-dim: #0b1117;
+  --color-surface-bright: #182430;
+  --color-surface-container-lowest: #0b1117;
+  --color-surface-container-low: #131d27;
+  --color-surface-container: #182430;
+  --color-surface-container-high: #202e3b;
+  --color-surface-container-highest: #283746;
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #bfc8cc;
+  --color-inverse-surface: #e5e2e1;
+  --color-inverse-on-surface: #1c1b1b;
+  --color-outline: #8a9497;
+  --color-outline-variant: #3f484c;
+  --color-background: #0b1117;
+  --color-on-background: #e5e2e1;
+  --color-surface-variant: #283746;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+
+  &.fill {
+    font-variation-settings:
+      'FILL' 1,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24;
+  }
+}
+
+.zebra-row:nth-child(even) {
+  background-color: rgba(0, 70, 85, 0.02);
+}
+
+.aquatic-bg {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-primary-fixed) 100%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 60%);
+    animation: aquatic-drift 20s infinite linear;
+    pointer-events: none;
+  }
+}
+
+@keyframes aquatic-drift {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate(5%, 5%) rotate(10deg);
+  }
+}

@@ -1,0 +1,88 @@
+@if (open) {
+  <div class="fixed inset-0 z-[95] flex items-center justify-center bg-inverse-surface/40 p-4">
+    <div class="bg-surface rounded-xl shadow-[0px_4px_20px_rgba(0,95,115,0.15)] border border-outline-variant/20 w-full max-w-md">
+      <div class="flex items-center justify-between p-6 border-b border-outline-variant/20">
+        <h3 class="font-headline-md text-headline-md text-on-surface">
+          {{ sensor ? 'Editar Sensor' : 'Nuevo Sensor' }}
+        </h3>
+        <button type="button" (click)="cancelled.emit()" class="text-on-surface-variant hover:text-primary">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="p-6 flex flex-col gap-4">
+        <div class="space-y-1">
+          <label for="tipo" class="font-caption text-caption text-on-surface-variant">Tipo</label>
+          <select
+            id="tipo"
+            formControlName="tipo"
+            class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/50"
+          >
+            <option value="temperatura">Temperatura</option>
+            <option value="oxigeno_disuelto">Oxígeno Disuelto</option>
+            <option value="ph">pH</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label for="estado" class="font-caption text-caption text-on-surface-variant">Estado</label>
+            <select
+              id="estado"
+              formControlName="estado"
+              class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/50"
+            >
+              <option value="activo">Activo</option>
+              <option value="inactivo">Inactivo</option>
+              <option value="fallo">Fallo</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label for="unidad_medida" class="font-caption text-caption text-on-surface-variant">Unidad de medida</label>
+            <input
+              id="unidad_medida"
+              formControlName="unidad_medida"
+              class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/50"
+            />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label for="ubicacion" class="font-caption text-caption text-on-surface-variant">Ubicación</label>
+          <input
+            id="ubicacion"
+            formControlName="ubicacion"
+            class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/50"
+          />
+        </div>
+
+        <div class="space-y-1">
+          <label for="fecha_instalacion" class="font-caption text-caption text-on-surface-variant">Fecha de instalación</label>
+          <input
+            id="fecha_instalacion"
+            type="date"
+            formControlName="fecha_instalacion"
+            class="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/50"
+          />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            (click)="cancelled.emit()"
+            class="px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container-low transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="saving"
+            class="px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-primary-container transition-colors disabled:opacity-60"
+          >
+            {{ saving ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

@@ -1,0 +1,117 @@
+@if (open) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm p-4">
+    <div class="w-full max-w-lg bg-surface rounded-xl shadow-[0px_12px_40px_rgba(0,70,85,0.15)] flex flex-col overflow-hidden max-h-[90vh]">
+      <div class="flex justify-between items-center px-6 py-5 border-b border-outline-variant/30">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">person_add</span>
+          </div>
+          <h2 class="font-headline-md text-[20px] font-semibold text-primary">{{ usuario ? 'Editar Usuario' : 'Añadir Usuario' }}</h2>
+        </div>
+        <button type="button" (click)="cancelled.emit()" class="text-on-surface-variant hover:text-error transition-colors p-2 rounded-full hover:bg-surface-container">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="p-6 flex flex-col gap-6 overflow-y-auto">
+        <div class="flex flex-col gap-2">
+          <label for="nombre" class="font-data-label text-data-label text-on-surface-variant">Nombre Completo</label>
+          <input
+            id="nombre"
+            formControlName="nombre"
+            placeholder="Ej. Juan Pérez"
+            class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="correo" class="font-data-label text-data-label text-on-surface-variant">Correo Electrónico</label>
+          <input
+            id="correo"
+            type="email"
+            formControlName="correo"
+            placeholder="usuario@aquashrimp.com"
+            class="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="contrasena" class="font-data-label text-data-label text-on-surface-variant"
+            >Contraseña @if (usuario) {
+              <span class="text-outline font-normal">(dejar en blanco para no cambiarla)</span>
+            }</label
+          >
+          <div class="relative">
+            <input
+              id="contrasena"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="contrasena"
+              placeholder="Mínimo 8 caracteres"
+              class="w-full pl-4 pr-12 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+            />
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition-colors"
+            >
+              <span class="material-symbols-outlined">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="id_rol" class="font-data-label text-data-label text-on-surface-variant">Rol de Usuario</label>
+          <select
+            id="id_rol"
+            formControlName="id_rol"
+            class="w-full px-4 py-3 appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
+          >
+            <option [value]="0" disabled>Seleccione un rol</option>
+            @for (rol of roles; track rol.id) {
+              <option [value]="rol.id">{{ rol.nombre_rol }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <span class="font-data-label text-data-label text-on-surface-variant">Estado de la Cuenta</span>
+          <div class="flex gap-4">
+            <label class="flex-1 cursor-pointer">
+              <input class="peer sr-only" formControlName="estado" type="radio" value="activo" />
+              <div
+                class="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-outline-variant bg-surface peer-checked:bg-secondary-container/20 peer-checked:border-secondary peer-checked:text-secondary text-on-surface-variant transition-all"
+              >
+                <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                <span class="font-data-label text-data-label">Activo</span>
+              </div>
+            </label>
+            <label class="flex-1 cursor-pointer">
+              <input class="peer sr-only" formControlName="estado" type="radio" value="inactivo" />
+              <div
+                class="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-outline-variant bg-surface peer-checked:bg-error-container/30 peer-checked:border-error peer-checked:text-error text-on-surface-variant transition-all"
+              >
+                <span class="material-symbols-outlined text-[20px]">cancel</span>
+                <span class="font-data-label text-data-label">Inactivo</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </form>
+
+      <div class="px-6 py-5 border-t border-outline-variant/30 bg-surface-container-low flex justify-end gap-4">
+        <button type="button" (click)="cancelled.emit()" class="px-6 py-2.5 rounded-lg border border-secondary text-secondary hover:bg-secondary/5 font-data-label text-data-label transition-colors">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          [disabled]="saving"
+          (click)="submit()"
+          class="px-6 py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container shadow-sm font-data-label text-data-label transition-all flex items-center gap-2 disabled:opacity-60"
+        >
+          <span class="material-symbols-outlined text-[18px]">save</span>
+          {{ saving ? 'Guardando...' : 'Guardar Usuario' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

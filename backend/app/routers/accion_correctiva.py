@@ -62,10 +62,10 @@ def create_accion_correctiva(
     accion_in: AccionCorrectivaCreate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Create a new corrective action (Requires Administrador, Operador, or Biologo role)."""
+    """Create a new corrective action (Requires Administrador or Técnico Acuícola role)."""
     alerta = services.alerta.get_alerta(db, alerta_id=accion_in.id_alerta)
     if not alerta:
         raise HTTPException(
@@ -87,10 +87,10 @@ def update_accion_correctiva(
     accion_in: AccionCorrectivaUpdate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Operador", "Biologo"])
+        require_roles(["Administrador", "Técnico Acuícola"])
     ),
 ):
-    """Update a corrective action (Requires Administrador, Operador, or Biologo role)."""
+    """Update a corrective action (Requires Administrador or Técnico Acuícola role)."""
     db_accion = services.accion_correctiva.get_accion_correctiva(
         db, accion_id=accion_id
     )

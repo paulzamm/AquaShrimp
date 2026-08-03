@@ -62,10 +62,10 @@ def create_reporte_gerencial(
     reporte_in: ReporteGerencialCreate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Gerente", "Biologo", "Operador"])
+        require_roles(["Administrador", "Gerencia", "Técnico Acuícola"])
     ),
 ):
-    """Create a new managerial report (Requires Administrador, Gerente, Biologo, or Operador role)."""
+    """Create a new managerial report (Requires Administrador, Gerencia, or Técnico Acuícola role)."""
     usuario = services.usuario.get_usuario(db, usuario_id=reporte_in.id_usuario)
     if not usuario:
         raise HTTPException(
@@ -83,10 +83,10 @@ def update_reporte_gerencial(
     reporte_in: ReporteGerencialUpdate,
     db: Session = Depends(get_db),
     current_user: Usuario = Depends(
-        require_roles(["Administrador", "Gerente", "Biologo", "Operador"])
+        require_roles(["Administrador", "Gerencia", "Técnico Acuícola"])
     ),
 ):
-    """Update a managerial report (Requires Administrador, Gerente, Biologo, or Operador role)."""
+    """Update a managerial report (Requires Administrador, Gerencia, or Técnico Acuícola role)."""
     db_reporte = services.reporte_gerencial.get_reporte_gerencial(
         db, reporte_id=reporte_id
     )
