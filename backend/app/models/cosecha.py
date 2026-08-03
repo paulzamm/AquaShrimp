@@ -8,19 +8,14 @@ from app.models.base import TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.piscina import Piscina
-    from app.models.usuario import Usuario
 
 
-class RecomendacionAlimentacion(Base, TimestampMixin):
-    __tablename__ = "recomendaciones_alimentacion"
+class Cosecha(Base, TimestampMixin):
+    __tablename__ = "cosechas"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     id_piscina: Mapped[Optional[int]] = mapped_column(
         ForeignKey("piscinas.id", ondelete="CASCADE"), nullable=True
     )
-    id_usuario: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("usuarios.id"), nullable=True
-    )
 
-    piscina: Mapped[Optional["Piscina"]] = relationship(back_populates="recomendaciones")
-    usuario: Mapped[Optional["Usuario"]] = relationship(back_populates="recomendaciones")
+    piscina: Mapped[Optional["Piscina"]] = relationship(back_populates="cosechas")
