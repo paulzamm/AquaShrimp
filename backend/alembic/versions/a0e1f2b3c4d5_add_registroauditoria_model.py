@@ -25,7 +25,10 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('id_usuario', sa.Integer(), nullable=True),
     sa.Column('accion', sa.String(length=100), nullable=False),
+    sa.Column('tabla_afectada', sa.String(length=100), nullable=True),
+    sa.Column('registro_id', sa.Integer(), nullable=True),
     sa.Column('detalles', sa.Text(), nullable=True),
+    sa.Column('ip_origen', sa.String(length=45), nullable=True),
     sa.Column('fecha_hora', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.ForeignKeyConstraint(['id_usuario'], ['usuarios.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')

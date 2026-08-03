@@ -33,9 +33,14 @@ def test_session(test_engine):
         session.close()
 
 
+from fastapi import Request
+
+
 @pytest.fixture
 def client(test_session):
-    def override_get_db():
+    def override_get_db(request: Request):
+        if hasattr(request, "state"):
+            request.state.db = test_session
         try:
             yield test_session
         finally:
