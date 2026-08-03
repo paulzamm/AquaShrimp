@@ -16,10 +16,8 @@ class Base(DeclarativeBase):
     pass
 
 
-def get_db(request: Request):
+def get_db():
     db: Session = SessionLocal()
-    if hasattr(request, "state"):
-        request.state.db = db
     try:
         yield db
     finally:
