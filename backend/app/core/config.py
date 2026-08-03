@@ -2,11 +2,11 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    DB_HOST: str = "localhost"
-    DB_PORT: int = 5432
-    DB_USER: str = "admin"
-    DB_PASSWORD: str = "root"
-    DB_NAME: str = "aquashrimp_db"
+    DB_HOST: str 
+    DB_PORT: int 
+    DB_USER: str 
+    DB_PASSWORD: str
+    DB_NAME: str 
 
     APP_ENV: str = "development"
     SECRET_KEY: str = "change-me-in-production"
