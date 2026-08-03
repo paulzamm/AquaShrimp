@@ -1,5 +1,5 @@
 """Services package."""
 
-from app.services import piscina, rol, sensor, usuario
+from app.services import bpm, piscina, rol, sensor, usuario
 
-__all__ = ["piscina", "rol", "sensor", "usuario"]
+__all__ = ["bpm", "piscina", "rol", "sensor", "usuario"]

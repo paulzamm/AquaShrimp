@@ -1,10 +1,12 @@
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.routers import auth, piscina, rol, sensor, usuario
+from app.routers import auth, lecturas, piscina, rol, sensor, usuario
 
 app = FastAPI(
     title="AquaShrimp API",
@@ -12,12 +14,23 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
+@app.exception_handler(IntegrityError)
+def integrity_error_handler(request: Request, exc: IntegrityError):
+    """Global exception handler for IntegrityError returning 400 Bad Request."""
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": "Error de integridad en la base de datos u operación no permitida."},
+    )
+
+
 # Include Routers
 app.include_router(auth.router)
 app.include_router(rol.router)
 app.include_router(usuario.router)
 app.include_router(piscina.router)
 app.include_router(sensor.router)
+app.include_router(lecturas.router)
 
 # Configuration for CORS middleware
 app.add_middleware(
