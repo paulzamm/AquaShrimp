@@ -57,3 +57,6 @@ class Alerta(Base, TimestampMixin):
     lectura: Mapped[Optional["LecturaSensor"]] = relationship(back_populates="alertas")
     sensor: Mapped[Optional["Sensor"]] = relationship(back_populates="alertas")
     usuario: Mapped[Optional["Usuario"]] = relationship(back_populates="alertas")
+    acciones_correctivas: Mapped[list["AccionCorrectiva"]] = relationship(
+        back_populates="alerta", cascade="all, delete-orphan"
+    )

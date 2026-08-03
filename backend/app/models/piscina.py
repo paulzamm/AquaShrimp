@@ -36,9 +36,13 @@ class Piscina(Base, TimestampMixin):
     sensores: Mapped[list["Sensor"]] = relationship(
         back_populates="piscina", cascade="all, delete-orphan"
     )
-    recomendaciones: Mapped[list["RecomendacionAlimentacion"]] = relationship(
+    recomendaciones_alimentacion: Mapped[list["RecomendacionAlimentacion"]] = relationship(
         back_populates="piscina", cascade="all, delete-orphan"
     )
     cosechas: Mapped[list["Cosecha"]] = relationship(
         back_populates="piscina", cascade="all, delete-orphan"
     )
+
+    @property
+    def recomendaciones(self) -> list["RecomendacionAlimentacion"]:
+        return self.recomendaciones_alimentacion

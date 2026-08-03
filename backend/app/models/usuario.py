@@ -38,9 +38,13 @@ class Usuario(Base, TimestampMixin):
     acciones_correctivas: Mapped[list["AccionCorrectiva"]] = relationship(
         back_populates="usuario"
     )
-    recomendaciones: Mapped[list["RecomendacionAlimentacion"]] = relationship(
+    recomendaciones_alimentacion: Mapped[list["RecomendacionAlimentacion"]] = relationship(
         back_populates="usuario"
     )
     reportes: Mapped[list["ReporteGerencial"]] = relationship(
         back_populates="usuario"
     )
+
+    @property
+    def recomendaciones(self) -> list["RecomendacionAlimentacion"]:
+        return self.recomendaciones_alimentacion
