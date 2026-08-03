@@ -32,6 +32,10 @@ class Piscina(Base, TimestampMixin):
     estado: Mapped[str] = mapped_column(String(20), default="activa")
     fecha_inicio_ciclo: Mapped[Optional[date]] = mapped_column(nullable=True)
 
+    @property
+    def recomendaciones_alimentacion(self) -> list["RecomendacionAlimentacion"]:
+        return self.recomendaciones
+
     # Relationships
     sensores: Mapped[list["Sensor"]] = relationship(
         back_populates="piscina", cascade="all, delete-orphan"
