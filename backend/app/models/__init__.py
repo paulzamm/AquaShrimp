@@ -8,6 +8,7 @@ from app.models.accion_correctiva import AccionCorrectiva
 from app.models.recomendacion_alimentacion import RecomendacionAlimentacion
 from app.models.cosecha import Cosecha
 from app.models.reporte_gerencial import ReporteGerencial
+from app.models.registro_auditoria import RegistroAuditoria
 
 __all__ = [
     "Rol",
@@ -20,4 +21,5 @@ __all__ = [
     "RecomendacionAlimentacion",
     "Cosecha",
     "ReporteGerencial",
+    "RegistroAuditoria",
 ]
