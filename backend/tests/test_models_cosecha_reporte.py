@@ -70,6 +70,7 @@ class TestCosechaModel:
         with pytest.raises(IntegrityError):
             test_session.flush()
 
+<<<<<<< HEAD
     def test_cosecha_talla_positiva_constraint(self, test_session):
         piscina = Piscina(codigo="P-CO5", ubicacion="T", area_m2=100, profundidad=1.0)
         test_session.add(piscina)
@@ -82,6 +83,8 @@ class TestCosechaModel:
         with pytest.raises(IntegrityError):
             test_session.flush()
 
+=======
+>>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
 
 class TestReporteGerencialModel:
     def test_create_reporte(self, test_session):
@@ -96,7 +99,11 @@ class TestReporteGerencialModel:
 
         reporte = ReporteGerencial(
             id_usuario=usuario.id,
+<<<<<<< HEAD
             tipo_reporte="rendimiento",
+=======
+            tipo_reporte="mensual",
+>>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
             periodo_inicio=date(2026, 6, 1),
             periodo_fin=date(2026, 6, 30),
         )
@@ -116,7 +123,11 @@ class TestReporteGerencialModel:
 
         reporte = ReporteGerencial(
             id_usuario=usuario.id,
+<<<<<<< HEAD
             tipo_reporte="alertas",
+=======
+            tipo_reporte="semanal",
+>>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
             periodo_inicio=date(2026, 7, 1),
             periodo_fin=date(2026, 7, 7),
         )
@@ -145,6 +156,7 @@ class TestReporteGerencialModel:
         test_session.add(reporte)
         with pytest.raises(IntegrityError):
             test_session.flush()
+<<<<<<< HEAD
 
     def test_reporte_tipo_invalido_constraint(self, test_session):
         rol = Rol(nombre_rol="R-RP4")
@@ -165,3 +177,5 @@ class TestReporteGerencialModel:
         test_session.add(reporte)
         with pytest.raises(IntegrityError):
             test_session.flush()
+=======
+>>>>>>> 4ba2264577f2a0358d62cc905ca3f604f07dd993
