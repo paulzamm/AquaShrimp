@@ -8,6 +8,7 @@ from app.core.database import Base
 from app.models.base import TimestampMixin
 
 if TYPE_CHECKING:
+    from app.models.alerta import Alerta
     from app.models.lectura_sensor import LecturaSensor
     from app.models.piscina import Piscina
 
@@ -39,5 +40,8 @@ class Sensor(Base, TimestampMixin):
     # Relationships
     piscina: Mapped["Piscina"] = relationship(back_populates="sensores")
     lecturas: Mapped[list["LecturaSensor"]] = relationship(
+        back_populates="sensor", cascade="all, delete-orphan"
+    )
+    alertas: Mapped[list["Alerta"]] = relationship(
         back_populates="sensor", cascade="all, delete-orphan"
     )

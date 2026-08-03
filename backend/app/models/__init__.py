@@ -1,7 +1,4 @@
 from app.models.accion_correctiva import AccionCorrectiva
-from app.models.cosecha import Cosecha
-from app.models.lectura_sensor import LecturaSensor
-from app.models.piscina import Piscina
 from app.models.recomendacion_alimentacion import RecomendacionAlimentacion
 from app.models.reporte_gerencial import ReporteGerencial
 from app.models.rol import Rol
@@ -12,6 +9,7 @@ __all__ = [
     "Rol",
     "Usuario",
     "AccionCorrectiva",
+    "Alerta",
     "RecomendacionAlimentacion",
     "ReporteGerencial",
     "Piscina",

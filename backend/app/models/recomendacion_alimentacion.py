@@ -1,6 +1,10 @@
+<<<<<<< HEAD
+=======
+from datetime import datetime
+>>>>>>> develop
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import CheckConstraint, Float, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -13,8 +17,18 @@ if TYPE_CHECKING:
 
 class RecomendacionAlimentacion(Base, TimestampMixin):
     __tablename__ = "recomendaciones_alimentacion"
+    __table_args__ = (
+        CheckConstraint(
+            "cantidad_kg > 0", name="ck_recomendaciones_cantidad_positiva"
+        ),
+        CheckConstraint(
+            "estado IN ('pendiente', 'aplicada', 'rechazada')",
+            name="ck_recomendaciones_estado",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+<<<<<<< HEAD
     id_piscina: Mapped[Optional[int]] = mapped_column(
         ForeignKey("piscinas.id", ondelete="CASCADE"), nullable=True
     )
@@ -24,3 +38,24 @@ class RecomendacionAlimentacion(Base, TimestampMixin):
 
     piscina: Mapped[Optional["Piscina"]] = relationship(back_populates="recomendaciones")
     usuario: Mapped[Optional["Usuario"]] = relationship(back_populates="recomendaciones")
+=======
+    id_piscina: Mapped[int] = mapped_column(
+        ForeignKey("piscinas.id", ondelete="CASCADE")
+    )
+    id_usuario: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("usuarios.id", ondelete="RESTRICT"), nullable=True
+    )
+    cantidad_kg: Mapped[float] = mapped_column(Float)
+    frecuencia: Mapped[str] = mapped_column(String(50))
+    criterio: Mapped[str] = mapped_column(Text)
+    fecha_generacion: Mapped[datetime] = mapped_column(server_default=func.now())
+    estado: Mapped[str] = mapped_column(String(20), default="pendiente")
+
+    # Relationships
+    piscina: Mapped["Piscina"] = relationship(
+        back_populates="recomendaciones_alimentacion"
+    )
+    usuario: Mapped[Optional["Usuario"]] = relationship(
+        back_populates="recomendaciones_alimentacion"
+    )
+>>>>>>> develop

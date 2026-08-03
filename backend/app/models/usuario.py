@@ -9,6 +9,7 @@ from app.models.base import TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.accion_correctiva import AccionCorrectiva
+    from app.models.alerta import Alerta
     from app.models.recomendacion_alimentacion import RecomendacionAlimentacion
     from app.models.reporte_gerencial import ReporteGerencial
     from app.models.rol import Rol
@@ -33,12 +34,17 @@ class Usuario(Base, TimestampMixin):
 
     # Relationships
     rol: Mapped["Rol"] = relationship(back_populates="usuarios")
+    alertas: Mapped[list["Alerta"]] = relationship(back_populates="usuario")
     acciones_correctivas: Mapped[list["AccionCorrectiva"]] = relationship(
         back_populates="usuario"
     )
-    recomendaciones: Mapped[list["RecomendacionAlimentacion"]] = relationship(
+    recomendaciones_alimentacion: Mapped[list["RecomendacionAlimentacion"]] = relationship(
         back_populates="usuario"
     )
     reportes: Mapped[list["ReporteGerencial"]] = relationship(
         back_populates="usuario"
     )
+
+    @property
+    def recomendaciones(self) -> list["RecomendacionAlimentacion"]:
+        return self.recomendaciones_alimentacion
